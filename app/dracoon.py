@@ -2,20 +2,19 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from statsmodels.stats.multitest import multipletests
 from fitter import Fitter, get_common_distributions, get_distributions
 import scipy.stats as ss
-import re
 import scipy.special as sc
+import re
 from itertools import product
 # time measures
 from tqdm import tqdm
 import time
-import random
-
+import datetime
 # parallelization
 import functools
-
 # optimizer
 TRY_USE_NUMBA = True
 
@@ -24,7 +23,6 @@ def jit_if_available(func):
     # default "do nothing" decorator with the numba-like interface
     def decorated(*args, **kwargs):
         return func(*args, **kwargs)
-
     return decorated
 
 
@@ -36,7 +34,6 @@ if TRY_USE_NUMBA:
         print("Numba is available. Optimization on.")
     except:
         print("Numba is not available. Install numba for a bit faster calculations")
-import datetime
 
 
 # @nb.njit
@@ -85,8 +82,6 @@ def entropy_between_2_genes(gene_a_vals, gene_b_vals, epsilon=np.finfo(float).ep
 # @nb.njit
 def simulate_values_for_differential_params(gene_i_values_a, gene_i_values_b, gene_j_values_a, gene_j_values_b,
                                             association_func):
-    n_samples_a = len(gene_i_values_a)
-
     shuff_gene_i_values_a = np.random.permutation(gene_i_values_a)
     shuff_gene_i_values_b = np.random.permutation(gene_i_values_b)
     genei = np.concatenate((shuff_gene_i_values_a, shuff_gene_i_values_b), axis=0)
@@ -116,14 +111,6 @@ def njitn_random_genepairs(numpydata_a, numpydata_b, am, niters):
     # while len(background_distribution_absdiff) < niters:
     for _ in range(niters):
         try:
-            # Shuffle rows
-            # np.random.shuffle(numpydata_a)
-            # np.random.shuffle(numpydata_b)
-
-            # Shuffle columns
-            # numpydata_a = np.random.permutation(numpydata_a.T).T
-            # numpydata_b = np.random.permutation(numpydata_b.T).T
-
             gene_i, gene_j = np.random.choice(ngenes, 2, replace=False)
 
             simul_abs_dif, simul_shift = simulate_values_for_differential_params(
@@ -142,48 +129,47 @@ def njitn_random_genepairs(numpydata_a, numpydata_b, am, niters):
 
 
 # @nb.njit
-def run_pearson(kombi, data_A, data_B, biom_data):
-    ra = pearsoncorr(data_A[:, kombi[0]], data_A[:, kombi[1]])
-    rb = pearsoncorr(data_B[:, kombi[0]], data_B[:, kombi[1]])
+def run_pearson(kombi, data_a, data_b, biom_data):
+    ra = pearsoncorr(data_a[:, kombi[0]], data_a[:, kombi[1]])
+    rb = pearsoncorr(data_b[:, kombi[0]], data_b[:, kombi[1]])
     rall = pearsoncorr(biom_data[:, kombi[0]], biom_data[:, kombi[1]])
     return ra, rb, rall
 
 
 # @nb.njit
-def run_spearman(kombi, data_A, data_B, biom_data):
-    ra = numpyspearmancorr(data_A[:, kombi[0]], data_A[:, kombi[1]])
-    rb = numpyspearmancorr(data_B[:, kombi[0]], data_B[:, kombi[1]])
+def run_spearman(kombi, data_a, data_b, biom_data):
+    ra = numpyspearmancorr(data_a[:, kombi[0]], data_a[:, kombi[1]])
+    rb = numpyspearmancorr(data_b[:, kombi[0]], data_b[:, kombi[1]])
     rall = numpyspearmancorr(biom_data[:, kombi[0]], biom_data[:, kombi[1]])
     return ra, rb, rall
 
 
 # @nb.njit
-def run_entropy(kombi, data_A, data_B, biom_data):
-    ra = entropy_between_2_genes(data_A[:, kombi[0]], data_A[:, kombi[1]])
-    rb = entropy_between_2_genes(data_B[:, kombi[0]], data_B[:, kombi[1]])
+def run_entropy(kombi, data_a, data_b, biom_data):
+    ra = entropy_between_2_genes(data_a[:, kombi[0]], data_a[:, kombi[1]])
+    rb = entropy_between_2_genes(data_b[:, kombi[0]], data_b[:, kombi[1]])
     rall = entropy_between_2_genes(biom_data[:, kombi[0]], biom_data[:, kombi[1]])
     return ra, rb, rall
 
 
 # @nb.njit
-def print_correlation_line(kombi, data_A, data_B, biom_data, bg_abs, bg_shift, alpha_shift=2, fun=run_pearson):
-    ra, rb, rall = fun(kombi, data_A, data_B, biom_data)
+def print_correlation_line(kombi, data_a, data_b, biom_data, bg_abs, bg_shift, alpha_shift=2, fun=run_pearson):
+    ra, rb, rall = fun(kombi, data_a, data_b, biom_data)
     # Compute differential metrics
     abs_dif = abs(ra - rb)
     shift = (ra + rb) / alpha_shift - rall
     # Compute simulated values for the differential parameters n_iter times, 10000 by default
     abs_dif_pval = test_significance(simulated_results=bg_abs, observed_value=abs_dif, two_sided=False)
     shift_pval = test_significance(simulated_results=bg_shift, observed_value=shift, two_sided=True)
-
     return float(kombi[0]), float(kombi[1]), ra, rb, rall, abs_dif, abs_dif_pval, shift, shift_pval
 
 
 # @nb.njit(parallel=True)
-def prangeprint_correlations(k1, k2, data_A, data_B, biom_data, bg_abs, bg_shift, am, alpha_shift=2):
+def prangeprint_correlations(k1, k2, data_a, data_b, biom_data, bg_abs, bg_shift, am, alpha_shift=2):
     arr = np.empty((len(k1), 9), dtype=nb.f4)
     for i in nb.prange(len(k1)):
         # print(k1[i])
-        arr[i, :] = print_correlation_line(kombi=(k1[i], k2[i]), data_A=data_A, data_B=data_B, biom_data=biom_data,
+        arr[i, :] = print_correlation_line(kombi=(k1[i], k2[i]), data_a=data_a, data_b=data_b, biom_data=biom_data,
                                            bg_abs=bg_abs, bg_shift=bg_shift, alpha_shift=alpha_shift, fun=am)
     return arr
 
@@ -455,10 +441,10 @@ class DraCooN_GRN:
                                 'hypsecant']
             fitdist_absdiff, params_absdiff = self.estimate_bestdist_params(
                 distribution=self.background_distribution_absdiff, possible_distributions=best_dists_absdiff,
-                timeout=self.timeout_fitter)
+                timeout=self.timeout_fitter, dist_name='absdiff')
             fitdist_shift, params_shift = self.estimate_bestdist_params(distribution=self.background_distribution_shift,
                                                                         possible_distributions=best_dists_shift,
-                                                                        timeout=self.timeout_fitter)
+                                                                        timeout=self.timeout_fitter, dist_name='shift')
             absdiffpval = list(map(functools.partial(self.estimate_pval_fitdist, dist=fitdist_absdiff,
                                                      param=params_absdiff, two_sided=False), absdiff))
             shiftpval = list(map(functools.partial(self.estimate_pval_fitdist, dist=fitdist_shift,
@@ -519,7 +505,7 @@ class DraCooN_GRN:
                           combis[i:i + n]]
                 k1 = [combi[0] for combi in kombis]
                 k2 = [combi[1] for combi in kombis]
-                resk1 = prangeprint_correlations(k1, k2, data_A=np.array(self.data_A), data_B=np.array(self.data_B),
+                resk1 = prangeprint_correlations(k1, k2, data_a=np.array(self.data_A), data_b=np.array(self.data_B),
                                                  biom_data=np.array(self.biom_data),
                                                  bg_abs=self.background_distribution_absdiff,
                                                  bg_shift=self.background_distribution_shift,
@@ -581,10 +567,10 @@ class DraCooN_GRN:
         fitdist_absdiff, params_absdiff = self.estimate_bestdist_params(
             distribution=self.background_distribution_absdiff,
             possible_distributions=best_dists_absdiff,
-            timeout=self.timeout_fitter)
+            timeout=self.timeout_fitter, dist_name='absdiff')
         fitdist_shift, params_shift = self.estimate_bestdist_params(distribution=self.background_distribution_shift,
                                                                     possible_distributions=best_dists_shift,
-                                                                    timeout=self.timeout_fitter)
+                                                                    timeout=self.timeout_fitter, dist_name='shift')
         # Saving results per iteration
         metric_to_funcs = {'pearson': run_pearson, 'spearman': run_spearman, 'entropy': run_entropy}
         corrfunc = metric_to_funcs[self.association_measure]
@@ -733,9 +719,9 @@ class DraCooN_GRN:
         if corr_pval_filter is not None:
             self.association_pvalue_filter = corr_pval_filter
         # Filtered by unadjusted q val
-        self.res_p = self.threshold_pvalues(dataframe=self.res_unthresholded, column_prefix='p_')
+        self.res_p = self.threshold_pvalues(dataframe=self.res_unthresholded, column_prefix='p_', significance=1.1)
         # Filtered by adjusted q val
-        self.res_padj = self.threshold_pvalues(dataframe=self.res_unthresholded, column_prefix='padj_')
+        self.res_padj = self.threshold_pvalues(dataframe=self.res_unthresholded, column_prefix='padj_', significance=self.significance)
 
         if self.association_pvalue_filter:
             # self.res_p = self.res_p[ (self.res_p.p_A < self.association_pvalue_filter)
@@ -755,11 +741,13 @@ class DraCooN_GRN:
         self.res_padj = self.res_padj.rename(columns=lambda x: re.sub('_B$', '_' + str(self.conditions[1]), x))
         return self.res_p, self.res_padj
 
-    def threshold_pvalues(self, dataframe, column_prefix):
+
+    @staticmethod
+    def threshold_pvalues(dataframe, column_prefix, significance=0.05):
         absdiff = column_prefix + "absdiff"
         shift = column_prefix + "shift"
         # create a list of our conditions
-        conditioned = dataframe.iloc[:, dataframe.columns.isin([absdiff, shift])] < self.significance
+        conditioned = dataframe.iloc[:, dataframe.columns.isin([absdiff, shift])] < significance
 
         for column in conditioned.columns:
             conditioned[column] = np.where(conditioned[column] == True, column.split('_')[1] + '_', '')
@@ -831,11 +819,14 @@ class DraCooN_GRN:
         else:
             return 1 - cd
 
-    @staticmethod
-    def estimate_bestdist_params(distribution, possible_distributions, timeout=60):
+    def estimate_bestdist_params(self, distribution, possible_distributions, dist_name, timeout=60):
         fit_dist = Fitter(distribution, distributions=possible_distributions, timeout=timeout)
         fit_dist.fit()
         # fit_dist.summary()
+        if self.verbose:
+            fit_dist.summary(plot=True)
+            plt.title('Fitting for ' + dist_name + ' metric background distribution')
+            plt.show()
         best_fit = fit_dist.summary(plot=False).index.to_list()[0]
         params = fit_dist.fitted_param[best_fit]
         return getattr(ss, best_fit), params
@@ -854,51 +845,22 @@ class DraCooN_GRN:
 
 
 '''
-# Normalize from 0 to 1
-def normalize_df(df):
-    max_score = df.max().max()
-    min_score = df.min().min()
-    return (df - min_score) / (max_score - min_score)
-
-original_data = pd.read_excel("/Users/fernando/Documents/Research/DraCooN/evaluation/real_data/victor_spatialtranscriptomics/DKD_eGFR/Abundancies-Per-Image-Background-Removed-Normalized-With-Additional-Data.xlsx",sheet_name="Sheet1",index_col=0, header=0)
-original_data.loc[:, 'unique_patient_id'] = original_data.index.map(dict(zip(original_data.index, original_data.unique_patient_id)))
-original_data['unique_patient_id'] = original_data['unique_patient_id'].astype('category')
-expr_data = original_data.drop(['plate', 'well', 'position', 'group', 'unique_id', 'is_diabetic'], axis=1).copy()
-expr_data = expr_data.groupby('unique_patient_id').mean()
-#expr_data.reset_index(inplace=True)
-
-expr_data.loc[:, 'group'] = expr_data.index.map(dict(zip(original_data.unique_patient_id, original_data.group)))
-expr_data.loc[:, 'is_diabetic'] = expr_data.index.map(dict(zip(original_data.unique_patient_id, original_data.is_diabetic)))
-expr_data.loc[:, 'plate'] = expr_data.index.map(dict(zip(original_data.unique_patient_id, original_data.plate)))
-expr_data.loc[:, 'well'] = expr_data.index.map(dict(zip(original_data.unique_patient_id, original_data.well)))
-
-X = expr_data.iloc[:, :-4].copy()
-y = expr_data.iloc[:, -4:]
-y.rename(columns={"group": "condition2"}, inplace=True)
-y['condition'] = np.where(y['condition2'] == 'Diabetic-Nephropathy', 'Diabetic-Nephropathy', 'CKD/nonCKD')
-print(y.head())
-
-X = X.iloc[X.index.isin(y.index)]
-X_norm = ss.zscore(normalize_df(X), axis=0)
-print(X_norm.head())
-
-nonckd_vs_ckd = DraCooN_GRN(biom_data=X_norm,
-                          cond_data=y,
-                          significance=1.1,
-                          association_measure='pearson',
-                          pvalue_adjustment_method='fdr_bh',
-                          dracoon_program='DC',
-                          associations_df=None,
-                          association_pvalue_filter=None,
-                          pval_method='background',
-                          iters=1000,
-                          verbose=True,
-                          matrixform=True)
-nonckd_vs_ckd.run()
+expression_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_expression.csv', index_col=0)
+condition_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_condition.csv', index_col=0)
+structure = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_structure.csv', index_col=0)
 
 
-import matplotlib.pyplot as plt
-plt.hist(nonckd_vs_ckd.background_distribution_absdiff, bins=100)
-plt.show()
-self = nonckd_vs_ckd
+draconet = DraCooN_GRN(biom_data=expression_data,
+                      cond_data=condition_data,
+                      significance=1.1,
+                      association_measure='entropy',
+                      pvalue_adjustment_method='fdr_bh',
+                      dracoon_program='DR',
+                      associations_df=structure,
+                      association_pvalue_filter=None,
+                      pval_method='fitted_background',
+                      iters=10000,
+                      verbose=True,
+                      matrixform=True)
+self = draconet
 '''
