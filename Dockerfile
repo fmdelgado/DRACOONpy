@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8031
 
 # Run app.py when the container launches
-CMD streamlit run dracoon_app.py --browser.serverAddress apps.cosy.bio --server.enableCORS=false --server.enableXsrfProtection=false --server.enableWebsocketCompression=false
+CMD streamlit run dracoon_app.py --browser.serverAddress prototypes.cosy.bio --server.enableCORS=false --server.enableXsrfProtection=false --server.enableWebsocketCompression=false
