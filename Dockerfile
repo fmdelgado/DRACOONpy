@@ -15,7 +15,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Make port 8031 available to the world outside this container
-EXPOSE 8031
+EXPOSE 8501
 
 # Run app.py when the container launches
 CMD streamlit run dracoon_app.py --browser.serverAddress prototypes.cosy.bio --server.enableCORS=false --server.enableXsrfProtection=false --server.enableWebsocketCompression=false
