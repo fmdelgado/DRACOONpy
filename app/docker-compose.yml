@@ -2,9 +2,15 @@ version: '1.0'
 
 services:
   app:
-    image: dracoon
+    image: ghcr.io/fmdelgado/dracoonpy:master
+    volumes:
+      - ./config.toml:/app/.streamlit/config.toml
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: always
+    ports:
+        - 8041:8031
     container_name: dracoon
-    build: .
 
-volumes:
-  desmond2-eval-volume:
+
+
