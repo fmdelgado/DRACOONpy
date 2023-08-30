@@ -845,22 +845,23 @@ class DraCooN_GRN:
 
 
 '''
-expression_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_expression.csv', index_col=0)
-condition_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_condition.csv', index_col=0)
-structure = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/ethanol_structure.csv', index_col=0)
+expression_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/app/expression_example.csv', index_col=0)
+condition_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/condition_example.csv', index_col=0)
+structure = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/structure_example.csv', index_col=0)
 
 
 draconet = DraCooN_GRN(biom_data=expression_data,
                       cond_data=condition_data,
-                      significance=1.1,
+                      significance=0.01,
                       association_measure='entropy',
                       pvalue_adjustment_method='fdr_bh',
                       dracoon_program='DR',
                       associations_df=structure,
                       association_pvalue_filter=None,
                       pval_method='fitted_background',
-                      iters=10000,
+                      iters=1000,
                       verbose=True,
                       matrixform=True)
+draconet.run()                    
 self = draconet
 '''

@@ -154,4 +154,6 @@ def plot_volcano(dracobj):
     finalnet['significance_group'] = finalnet.apply(assign_color, axis=1)
     fig = px.scatter(finalnet, x='absdiff', y='shift',
                      color='significance_group', hover_data=['source', 'target', 'padj_shift', 'padj_absdiff'])
+    fig.update_layout(title='Overview of differential associations')  # Add title here
+
     return fig
