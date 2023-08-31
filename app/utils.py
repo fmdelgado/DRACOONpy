@@ -101,39 +101,6 @@ def plot_dracoon_network(subnet):
     return g
 
 
-def plot_differetial_relationships(dracoonobj, conditions_dict=None):
-    # Iterate over the top 10 rows and plot the conditional distributions on the grid
-    df = dracoonobj.res_padj.sort_values(by=['padj_absdiff', 'padj_shift'], ascending=True)
-    df = df[(df['padj_shift'] < 0.1)]
-    if not conditions_dict:
-        conditions_dict = {str(dracoonobj.conditions[0]): str(dracoonobj.conditions[0]),
-                           str(dracoonobj.conditions[1]): str(dracoonobj.conditions[1])}
-
-    if not df.empty:
-        # Calculate the grid size based on the length of df
-        grid_size = int(math.ceil(math.sqrt(len(df))))
-        fig, axes = plt.subplots(grid_size, grid_size, figsize=(grid_size * 3, grid_size * 3))
-
-        for i, (index, row) in enumerate(df.iterrows()):
-            ax = axes[i // grid_size, i % grid_size]
-            plot_conditional_distribution(gene1=row['source'], gene2=row['target'], exprdata=dracoonobj.biom_data,
-                                          condata=dracoonobj.cond_data,
-                                          ra=row[f'r_{str(dracoonobj.conditions[0])}'],
-                                          rb=row[f'r_{str(dracoonobj.conditions[1])}'],
-                                          r=row['r'], absdiff=row['absdiff'],
-                                          pabsdiff=row['padj_absdiff'],
-                                          shift=row['shift'], pshift=row['padj_shift'], ax=ax,
-                                          conditions_dict=conditions_dict)
-        # Remove empty subplots if any
-        for j in range(i + 1, grid_size * grid_size):
-            fig.delaxes(axes[j // grid_size, j % grid_size])
-
-        # Adjust the layout and show the figure
-        plt.tight_layout()
-        fig = plt.gcf()  # get the current figure
-        fig.set_dpi(300)  # Set the DPI to 300
-        plt.show()
-
 
 def plot_volcano(dracobj):
     thres = dracobj.significance
