@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: dracoon
-Version: 0.1.1
+Version: 0.1.2
 Summary: DRaCOoN (Differential Regulation and CO-expression Networks) is a data-driven tool optimized for effectively retrieving differential relationships between genes across two distinct conditions. 
 Home-page: https://github.com/fmdelgado/DRACOONpy
 Author: Fernando M. Delgado Chaves, PhD
