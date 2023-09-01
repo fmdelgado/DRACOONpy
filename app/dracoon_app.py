@@ -221,7 +221,7 @@ def about_page():
     st.header("Overview")
 
     # Download and display the graphical abstract image
-    abstract_url = "https://github.com/fmdelgado/DRACOONpy/raw/master/img/graphical_abstract.jpg"
+    abstract_url = "https://github.com/fmdelgado/DRACOONpy/blob/master/img/graphical_abstract.jpg?raw=true"
     abstract_response = requests.get(abstract_url)
     abstract_image = Image.open(BytesIO(abstract_response.content))
     st.image(abstract_image, caption="Graphical Abstract")
