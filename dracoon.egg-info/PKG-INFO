@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: dracoon
-Version: 0.1.0
+Version: 0.1.1
 Summary: DRaCOoN (Differential Regulation and CO-expression Networks) is a data-driven tool optimized for effectively retrieving differential relationships between genes across two distinct conditions. 
 Home-page: https://github.com/fmdelgado/DRACOONpy
 Author: Fernando M. Delgado Chaves, PhD
@@ -9,10 +9,11 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Intended Audience :: Science/Research
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+License-File: LICENSE.txt
 
 # _DRaCOoN_: Differential Regulation and CO-expression Networks
 <p align="center">
-  <img src="img/dracoon_logo.png" width="300"/>
+  <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/dracoon_logo.png" width="300"/>
 </p>
 
 ## Introduction
@@ -20,7 +21,10 @@ _DRaCOoN_ (Differential Regulation and CO-expression Networks) is a data-driven 
 An overview of the algorithm is shown in the figure below:
 
 
-![pipeline](img/graphical_abstract.jpg?raw=true "DRaCooN pipeline")
+
+<p align="center">
+  <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/graphical_abstract.jpg" />
+</p>
 
 ## Features
 
@@ -38,6 +42,9 @@ An overview of the algorithm is shown in the figure below:
 ## Installation
 
 ### Using pip
+```bash
+pip install -i https://test.pypi.org/simple/ dracoon
+```
 
 ### From source
 
@@ -50,6 +57,10 @@ pip install -r requirements.txt
 ### Imports
 
 ```python
+# if installed from pip
+import dracoon
+
+# if installed from source
 from app.dracoon import dracoon
 ```
 

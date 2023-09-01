@@ -1,3 +1,4 @@
+LICENSE.txt
 README.md
 setup.py
 app/dracoon.py

@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='dracoon',
-    version='0.1.0',
+    version='0.1.1',
     url='https://github.com/fmdelgado/DRACOONpy',
     author='Fernando M. Delgado Chaves, PhD',
     author_email='fernando.miguel.delgado-chaves@uni-hamburg.de',
