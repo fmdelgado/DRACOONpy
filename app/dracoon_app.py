@@ -234,7 +234,7 @@ def about_page():
     st.markdown("### Code and Documentation")
     col4, col5 = st.columns([1, 9])
     with col4:
-        st.image(github_logo_image, width=64)  # Using higher width for better resolution
+        st.image(github_logo_image, width=30)  # Using higher width for better resolution
     with col5:
         st.markdown("[Visit our GitHub Repository](https://github.com/fmdelgado/DRACOONpy)")
 
