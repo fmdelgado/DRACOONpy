@@ -6,6 +6,9 @@ from utils import plot_dracoon_network, plot_volcano
 import json
 import pickle
 import os
+import requests
+from PIL import Image
+from io import BytesIO
 protected_indices = ["example"]
 
 
@@ -49,6 +52,8 @@ def load_index_from_db(index_name):
 
 
 def running_page():
+
+
     st.title("Run DRaCOoN")
     pass
 
@@ -133,6 +138,7 @@ def running_page():
 
 
 def upload_page():
+
     try:
         indices = get_json("index-list.json")
         if indices == None:
@@ -211,11 +217,34 @@ def upload_page():
 
 
 def about_page():
-    pass
+
+    st.header("Overview")
+
+    # Download and display the graphical abstract image
+    abstract_url = "https://github.com/fmdelgado/DRACOONpy/raw/master/img/graphical_abstract.jpg"
+    abstract_response = requests.get(abstract_url)
+    abstract_image = Image.open(BytesIO(abstract_response.content))
+    st.image(abstract_image, caption="Graphical Abstract")
+
+    # Download and display the GitHub logo
+    github_logo_url = "https://cdn-icons-png.flaticon.com/512/25/25231.png"
+    github_logo_response = requests.get(github_logo_url)
+    github_logo_image = Image.open(BytesIO(github_logo_response.content))
+
+    st.markdown("### Code and Documentation")
+    col4, col5 = st.columns([1, 9])
+    with col4:
+        st.image(github_logo_image, width=64)  # Using higher width for better resolution
+    with col5:
+        st.markdown("[Visit our GitHub Repository](https://github.com/fmdelgado/DRACOONpy)")
 
 
 def main():
     # Default content displayed when the app is first loaded
+    st.markdown(
+        f'<p align="center"> <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/dracoon_logo.png" width="300"/> </p>',
+        unsafe_allow_html=True,
+    )
     st.title("DRaCOoN")
     st.subheader("Differential Regulation and CO-expression Networks")
     page = st.sidebar.selectbox(
