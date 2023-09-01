@@ -31,11 +31,15 @@ An overview of the algorithm is shown in the figure below:
 
 ```bash
 git clone https://github.com/fmdelgado/DRaCOoNpy.git
-cd DRaCOoN
+cd DRaCOoN/app
 pip install -r requirements.txt
 ```
 
+### Imports
 
+```python
+import dracoon
+```
 ## Algorithmic Overview
 
 The algorithm operates in several major steps:

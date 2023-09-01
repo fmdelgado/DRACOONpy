@@ -216,7 +216,7 @@ def random_dist_genepair(gene_i_values_a, gene_i_values_b, gene_j_values_a, gene
     return np.asarray(background_distribution_absdiff), np.asarray(background_distribution_shift)
 
 
-class DraCooN_GRN:
+class dracoon:
     def __init__(self, biom_data, cond_data, dracoon_program, significance=0.05,
                  association_measure='entropy', pval_method='fitted_background', pvalue_adjustment_method='fdr_bh',
                  associations_df=None, association_pvalue_filter=None, iters=None, timeout_fitter=None,
@@ -850,7 +850,7 @@ condition_data = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/
 structure = pd.read_csv('/Users/fernando/Documents/Research/DRACOONpy/demo/structure_example.csv', index_col=0)
 
 
-draconet = DraCooN_GRN(biom_data=expression_data,
+draconet = dracoon(biom_data=expression_data,
                       cond_data=condition_data,
                       significance=0.01,
                       association_measure='entropy',

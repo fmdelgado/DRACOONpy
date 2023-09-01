@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import base64
-from dracoon import DraCooN_GRN
+from dracoon import dracoon
 from utils import plot_dracoon_network, plot_volcano
 import json
 import pickle
@@ -90,7 +90,7 @@ def running_page():
 
 
     if st.button("Run"):
-        dracoon_net = DraCooN_GRN(biom_data=default_biom_data,
+        dracoon_net = dracoon(biom_data=default_biom_data,
                                   cond_data=default_cond_data,
                                   significance=significance,
                                   association_measure=association_measure,
