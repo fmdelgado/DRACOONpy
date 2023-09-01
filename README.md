@@ -10,8 +10,7 @@ An overview of the algorithm is shown in the figure below:
 
 
 <p align="center">
-  <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/graphical_abstrac
-t.jpg" />
+  <img src="https://github.com/fmdelgado/DRACOONpy/blob/master/img/graphical_abstract.jpg?raw=true" />
 </p>
 
 ## Features
