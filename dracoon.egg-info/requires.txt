@@ -1,0 +1,13 @@
+matplotlib>=3.7.2
+pyvis>=0.3.1
+pandas>=2.0.3
+networkx>=3.1
+seaborn>=0.12.2
+plotly>=5.9.0
+statsmodels>=0.14.0
+numpy<=1.24.3
+fitter>=1.6.0
+scipy>=1.11.1
+tqdm>=4.66.1
+streamlit-chat>=0.1.1
+streamlit-pills>=0.3.0
