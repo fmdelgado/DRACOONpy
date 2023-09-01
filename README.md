@@ -1,10 +1,13 @@
 # _DRaCOoN_: Differential Regulation and CO-expression Networks
+<p align="center">
+  <img src="img/dracoon_logo.png" width="300"/>
+</p>
 
 ## Introduction
-
 _DRaCOoN_ (Differential Regulation and CO-expression Networks) is a data-driven tool optimized for effectively retrieving differential relationships between genes across two distinct conditions. The tool is designed to handle large datasets and offers various working modes for comprehensive analysis. It produces a differential network involving gene pairs whose association changes between two conditions.
+An overview of the algorithm is shown in the figure below:
 
-![DRaCOoN Workflow](img/graph_abst.pdf)
+![pipeline](img/graphical_abstract.jpg?raw=true "DRaCooN pipeline")
 
 ## Features
 
@@ -108,7 +111,6 @@ The main method of _DRaCOoN_ is `run()`. This method sequentially runs the follo
 - `threshold_results()`
 
 For more detailed information on the algorithm, please refer to the academic paper (citation needed).
-
 
 ## Contributing
 
