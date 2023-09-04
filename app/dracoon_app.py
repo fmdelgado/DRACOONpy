@@ -90,8 +90,7 @@ def running_page():
     dracoon_program = st.selectbox("dracoon_program", ['DR', 'other_program'], index=0)
     pval_method = st.selectbox("pval_method", ['fitted_background', 'background'], index=0)
     iters = st.slider("iters", min_value=100, max_value=10000, value=default_iters, step=100)
-    verbose = st.checkbox("verbose", default_verbose)
-    matrixform = st.checkbox("matrixform", default_matrixform)
+
 
 
     if st.button("Run"):
@@ -104,8 +103,8 @@ def running_page():
                                   associations_df=default_associations_df,
                                   pval_method=pval_method,
                                   iters=iters,
-                                  verbose=verbose,
-                                  matrixform=matrixform)
+                                  verbose=default_verbose,
+                                  matrixform=default_matrixform)
         dracoon_net.run()
         st.success('Done!')
         volcano_fig = plot_volcano(dracoon_net)
