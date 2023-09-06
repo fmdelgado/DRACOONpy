@@ -225,6 +225,7 @@ def about_page():
         An overview of the algorithm is shown in the figure below:
         """)
 
+
     # Download and display the graphical abstract image
     abstract_url = "https://github.com/fmdelgado/DRACOONpy/blob/master/img/graphical_abstract.jpg?raw=true"
     abstract_response = requests.get(abstract_url)
@@ -242,6 +243,24 @@ def about_page():
         st.image(github_logo_image, width=30)  # Using higher width for better resolution
     with col5:
         st.markdown("[Visit our GitHub Repository](https://github.com/fmdelgado/DRACOONpy)")
+
+    st.markdown(
+        f'''
+         <div style="text-align:center">
+             <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/logo_cosybio.png" width="100" style="margin:0px 15px 0px 15px;"/>
+             <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/REPO4EU-logo-main.png" width="120" style="margin:0px 15px 0px 15px;"/>
+             <img src="https://github.com/fmdelgado/DRACOONpy/raw/master/img/eu_funded_logo.jpeg" width="120" style="margin:0px 15px 0px 15px;"/>
+         </div>
+         ''',
+        unsafe_allow_html=True,
+    )
+    # Displaying the funding information
+    st.markdown("""
+    ---
+    **Funding Information:**
+
+    This project is funded by the European Union under grant agreement No. 101057619. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Health and Digital Executive Agency (HADEA). Neither the European Union nor the granting authority can be held responsible for them. This work was also partly supported by the Swiss State Secretariat for Education, Research and Innovation (SERI) under contract No. 22.00115.
+    """)
 
 
 def main():
