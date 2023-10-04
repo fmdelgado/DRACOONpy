@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-10-04T15:04:06.643Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="WE-hkl8biN_ME3cItSTr" version="22.0.2" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2023-10-04T20:09:33.015Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="WABK1Y0DApHPkD_K8dO6" version="22.0.2" type="github" pages="2">
   <diagram id="CqnBA_BF6wK8e6Pgfekp" name="Graphical abstract">
-    <mxGraphModel dx="2603" dy="3303" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#FFFFFF" math="1" shadow="0">
+    <mxGraphModel dx="1515" dy="2679" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#FFFFFF" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -764,7 +764,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="KVi2wWKJnxjSW5k2dJna" name="simulation framework">
-    <mxGraphModel dx="1366" dy="783" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="667" dy="382" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
