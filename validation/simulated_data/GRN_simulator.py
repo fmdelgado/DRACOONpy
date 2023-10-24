@@ -63,22 +63,27 @@ class GRN_simulator:
     def generate_DRN_graphsim(self):
         # print('Estimating control dataset...')
         self.structure = self.recreate_tree_structure()
-        # We add information about activation (1) or repression (-1). In principle, they are all activating.
-        grn_structure_path = '~/Documents/Research/DraCooN/checkups/data_simulator/graphsim_structure.csv'
-        self.structure.to_csv(grn_structure_path, index=False)
-        correlation_level = 1
-        outpath = '/Users/fernando/Documents/Research/DraCooN/checkups/graphsim/graphsim_simdata.csv'
-        os.system(
-            f"~/local/bin/Rscript /Users/fernando/Documents/Research/DraCooN/algorithm/graphism_grnsimulator.R {grn_structure_path} {self.n_samples} {outpath} {correlation_level} {self.mean_expression}")
-        simdata = pd.read_csv(outpath, index_col=0)
+        from rpy2.robjects import r
+        import rpy2.robjects.pandas2ri as pandas2ri
+
+        # Enable automatic conversion from R DataFrames to pandas DataFrames
+        pandas2ri.activate()
+
+        # Source the R script
+        r.source('validation/simulated_data/graphsim/graphsim_simulator.R')
+        simdata = r.generate_expression_analysis(self.structure,
+                                         self.n_samples,
+                                         self.mean_expression,
+                                         self.simdata_noise)
+        simdata = pd.DataFrame(simdata)
+        simdata.index = self.genes
+
+        # sns.heatmap(simdata.T.corr(), vmin=-1, vmax=1, annot=False, cmap='RdBu')
         # print('Estimating perturbed dataset...')
-        self.simulated_data, self.condition_data, self.shutdown_bioms, self.inverted_bioms, self.perturbed_bioms = self.split_and_perturb_simdata(
-            simdata=simdata)
-        self.simulated_data.index = list(map(lambda each: each[7:], self.simulated_data.index.to_list()))
-        self.condition_data.index = list(map(lambda each: each[7:], self.condition_data.index.to_list()))
+        self.simulated_data = self.split_and_perturb_simdata(simdata=simdata)
         # print('Estimating reference differential network...')
         self.refnet = self.get_reference_DN()
-
+        # print('Done!')
     def generate_DRN(self):
         # print('Estimating control dataset...')
         self.recreate_tree_structure()
@@ -422,7 +427,7 @@ class GRN_simulator:
 ---------------------------------------------------------------------------------------------------
 
 n_iters = 1000
-num_genes = 50
+num_genes = 20
 num_shuts = int(0.2 * num_genes) #20% of genes will be shut down
 num_TFs = int(0.3 * num_genes) #30% of genes will be TFs
 
@@ -435,6 +440,7 @@ simulation = GRN_simulator(n_genes=num_genes, n_tfs=num_TFs, n_samples=300,
                            simdata_noise=2,
                            perturbation_noise=2)
 simulation.generate_DRN()
+self = simulation
 #simulation.simulated_data = ss.zscore(simulation.simulated_data)
 
 simulation.plot_clustermap(cluster=True)
